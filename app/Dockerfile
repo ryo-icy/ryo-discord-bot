@@ -1,5 +1,7 @@
 FROM ubuntu:24.04
 
+LABEL org.opencontainers.image.source https://github.com/ryo-icy/ryo-discord-bot
+
 # Creat a user
 ARG UID=1001 \
     GID=1001
