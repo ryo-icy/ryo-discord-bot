@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  ryo-discord-bot:
+    image: "ghcr.io/ryo-icy/ryo-discord-bot:latest"
+    # build: ./app
+    container_name: ryo-bot
+    restart: always
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN}

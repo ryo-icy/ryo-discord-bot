@@ -1,1 +1,2 @@
 # Ryo-Discord-Bot
+Discordボットです。
