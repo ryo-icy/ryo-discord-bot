@@ -1,0 +1,29 @@
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ryo-discord-bot
+  labels:
+    name: ryo-discord-bot
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ryo-discord-bot
+  namespace: ryo-discord-bot
+spec:
+  selector:
+    matchLabels:
+      app: ryo-discord-bot
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ryo-discord-bot
+    spec:
+      containers:
+      - name: ryo-discord-bot
+        image: ghcr.io/ryo-icy/ryo-discord-bot:latest
+        env:
+            - name: DISCORD_TOKEN
+              value: ${DISCORD_TOKEN}
