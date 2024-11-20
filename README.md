@@ -42,7 +42,7 @@
     5. "Token"の"Reset Token"をクリックし、トークンを取得する
 
     6. 左メニューから"OAuth2"をクリックし、以下の順番で招待用リンクを発行
-        - "OAuth2 URL Generator"の"Scope"から"bot"を選択
-        - "OAuth2 URL Generator"の"Bot Permissions"から"View Channels"と"Send Messages"を選択
-        - "OAuth2 URL Generator"の"Generated URL"をコピー
+        1. "OAuth2 URL Generator"の"Scope"から"bot"を選択
+        2. "OAuth2 URL Generator"の"Bot Permissions"から"View Channels"と"Send Messages"を選択
+        3. "OAuth2 URL Generator"の"Generated URL"をコピー
 2. BOT招待用のリンクにアクセスし、参加させたいサーバを選択
