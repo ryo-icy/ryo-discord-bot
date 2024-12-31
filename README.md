@@ -20,9 +20,11 @@
 ## BOT作成手順
 1. [Developer portal](https://discord.com/developers/applications/)からApplicationを作成
     1. 右上の"New Application"をクリック
+    
         ![](./doc/img/step1.png)
 
     2. 表示されたモーダルウィンドウにDiscord Bot名を入力し、チェックボックスにチェックをつけて"Create"をクリック
+
         ![](./doc/img/step2.png)
     
     3. 左メニューから"Installation"をクリックし、以下を設定
