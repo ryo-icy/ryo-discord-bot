@@ -27,3 +27,5 @@ spec:
         env:
             - name: DISCORD_TOKEN
               value: ${DISCORD_TOKEN}
+            - name: DEFAULT_ROLE_ID
+              value: ${DEFAULT_ROLE_ID}

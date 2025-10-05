@@ -11,7 +11,7 @@
 ## Dockerコンテナで実行
 1. BOTのトークンを取得 ※以下BOT作成手順参照
 2. `git clone https://github.com/ryo-icy/ryo-discord-bot`
-3. `docker-compose.yaml`のDISCORD_TOKENにBOTのトークンを入力
+3. `docker-compose.yaml`のDISCORD_TOKENにBOTのトークンを入力、DEFAULT_ROLE_IDに参加時にデフォルトで付与するロール名を入力
 4. `docker compose up -d`
 
 > [!NOTE]
