@@ -7,10 +7,12 @@ from discord.app_commands import describe
 
 # Discord Botのトークンを環境変数から取得
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+DEFAULT_ROLE_ID = int(os.getenv('DEFAULT_ROLE_ID'))
 
 # Intents
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 bot = commands.Bot(command_prefix='/', intents=intents)
 tree = bot.tree
 
@@ -32,6 +34,16 @@ async def send_omikuji_message(ctx: discord.Interaction, messages: list, count: 
 async def on_ready() -> None:
     await bot.change_presence(activity=discord.CustomActivity(name='**りょう**を監視中'))
     await tree.sync()
+
+# メンバーが参加した際の処理
+@bot.event
+async def on_member_join(member: discord.Member) -> None:
+    ROLE_ID = DEFAULT_ROLE_ID
+
+    role = member.guild.get_role(ROLE_ID)
+    
+    if role is not None:
+        await member.add_roles(role)
 
 # メッセージを受信した際の処理
 @bot.event
