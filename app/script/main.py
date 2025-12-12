@@ -1,6 +1,8 @@
 import os
+import sys
 import random
 
+import asyncio
 import discord
 from discord.ext import commands
 from discord.app_commands import describe
@@ -32,8 +34,21 @@ async def send_omikuji_message(ctx: discord.Interaction, messages: list, count: 
 # BOT起動時の処理
 @bot.event
 async def on_ready() -> None:
-    await bot.change_presence(activity=discord.CustomActivity(name='**りょう**を監視中'))
+    await bot.change_presence(activity=discord.CustomActivity(name='りょうを監視中'))
     await tree.sync()
+
+# 拡張機能の読み込み
+async def load_extensions() -> None:
+    initial_extensions = [
+        "cogs.quake_alert",
+    ]
+
+    for extension in initial_extensions:
+        try:
+            await bot.load_extension(extension)
+            print(f"Extension '{extension}' loaded successfully.")
+        except Exception as e:
+            print(f"Failed to load extension {extension}: {e}")
 
 # メンバーが参加した際の処理
 @bot.event
@@ -68,5 +83,13 @@ async def omikuji(ctx: discord.Interaction, arg: int) -> None:
 async def neo_omikuji(ctx: discord.Interaction):
     await send_omikuji_message(ctx, neo_omikuji_list)
 
-# BOTの起動
-bot.run(DISCORD_TOKEN)
+if __name__ == "__main__":
+    sys.stdout.reconfigure(line_buffering=True)
+
+    async def main():
+        discord.utils.setup_logging()
+        async with bot:
+            await load_extensions()
+            await bot.start(DISCORD_TOKEN)
+
+    asyncio.run(main())
