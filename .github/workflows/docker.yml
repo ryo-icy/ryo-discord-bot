@@ -29,6 +29,7 @@ jobs:
         run: |
           image_id=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           echo "lowercase_id=$(echo $image_id | tr '[A-Z]' '[a-z]')" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
           echo "short-ref=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_OUTPUT
 
       - name: Build and push
@@ -38,4 +39,4 @@ jobs:
           push: true
           tags: |
             ${{ steps.get_image_id.outputs.lowercase_id }}:latest
-            ${{ steps.get_image_id.outputs.lowercase_id }}:${{ steps.get_image_id.outputs.short-ref }}
+            ${{ steps.get_image_id.outputs.lowercase_id }}:${{ steps.get_image_id.outputs.date }}-${{ steps.get_image_id.outputs.short-ref }}
