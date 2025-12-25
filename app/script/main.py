@@ -10,6 +10,7 @@ from discord.app_commands import describe
 # Discord Botのトークンを環境変数から取得
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 DEFAULT_ROLE_ID = int(os.getenv('DEFAULT_ROLE_ID'))
+TARGET_MESSAGE_ID = int(os.getenv('TARGET_MESSAGE_ID'))
 
 # Intents
 intents = discord.Intents.default()
@@ -38,27 +39,33 @@ async def on_ready() -> None:
     await tree.sync()
 
 # 拡張機能の読み込み
-async def load_extensions() -> None:
-    initial_extensions = [
-        "cogs.quake_alert",
-    ]
+# async def load_extensions() -> None:
+#     initial_extensions = [
+#         # "cogs.quake_alert",
+#     ]
 
-    for extension in initial_extensions:
-        try:
-            await bot.load_extension(extension)
-            print(f"Extension '{extension}' loaded successfully.")
-        except Exception as e:
-            print(f"Failed to load extension {extension}: {e}")
+#     for extension in initial_extensions:
+#         try:
+#             await bot.load_extension(extension)
+#             print(f"Extension '{extension}' loaded successfully.")
+#         except Exception as e:
+#             print(f"Failed to load extension {extension}: {e}")
 
-# メンバーが参加した際の処理
+# 特定のメッセージにリアクションした際の処理
 @bot.event
-async def on_member_join(member: discord.Member) -> None:
-    ROLE_ID = DEFAULT_ROLE_ID
-
-    role = member.guild.get_role(ROLE_ID)
-    
-    if role is not None:
-        await member.add_roles(role)
+async def on_raw_reaction_add(payload: discord.RawReactionActionEvent) -> None:
+    if payload.message_id == TARGET_MESSAGE_ID:
+        member = payload.member
+        if member and not member.bot:
+            role = member.guild.get_role(DEFAULT_ROLE_ID)
+            if role:
+                if role in member.roles:
+                    return
+                try:
+                    await member.add_roles(role)
+                    print(f"{member} にロールを付与しました。")
+                except discord.Forbidden:
+                    print(f"エラー: ロール(ID: {DEFAULT_ROLE_ID})を付与する権限がありません。Botのロールを対象ロールより上に配置してください。")
 
 # メッセージを受信した際の処理
 @bot.event
@@ -89,7 +96,7 @@ if __name__ == "__main__":
     async def main():
         discord.utils.setup_logging()
         async with bot:
-            await load_extensions()
+            # await load_extensions()
             await bot.start(DISCORD_TOKEN)
 
     asyncio.run(main())
