@@ -29,3 +29,5 @@ spec:
               value: ${DISCORD_TOKEN}
             - name: DEFAULT_ROLE_ID
               value: ${DEFAULT_ROLE_ID}
+            - name: TARGET_MESSAGE_ID
+              value: ${TARGET_MESSAGE_ID}
