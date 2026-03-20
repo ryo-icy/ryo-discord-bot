@@ -1,17 +1,31 @@
 # Ryo-Discord-Bot
 ローカルサーバ用のDiscord Botです。
 
-## コマンド一覧
-このDiscord Botで使用できるコマンド一覧
+## 機能一覧
+
+### スラッシュコマンド
 | コマンド | 使い方 |
 |---|---|
-| /omikuji [1~3の整数] | 引数で渡した回数おみくじを引きます |
-| /neo_omikuji | 説明付きのおみくじを引きます |
+| `/omikuji [1~3の整数]` | 引数で渡した回数おみくじを引きます |
+| `/neo_omikuji` | 説明付きのおみくじを引きます |
+
+### その他の機能
+| 機能 | 説明 |
+|---|---|
+| リアクションロール付与 | 特定のメッセージへのリアクション時に、指定したロールを付与します |
+| メンション返答 | ボットがメンションされた際にランダムな返答を送信します |
 
 ## Dockerコンテナで実行
 1. BOTのトークンを取得 ※以下BOT作成手順参照
 2. `git clone https://github.com/ryo-icy/ryo-discord-bot`
-3. `docker-compose.yaml`の環境変数を設定
+3. `.env` ファイルを作成し、環境変数を設定
+
+    ```env
+    DISCORD_TOKEN=取得したトークン
+    DEFAULT_ROLE_ID=付与するロールのID
+    TARGET_MESSAGE_ID=リアクション対象のメッセージID
+    ```
+
 4. `docker compose up -d`
 
 > [!NOTE]
