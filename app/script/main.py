@@ -1,16 +1,34 @@
 import os
 import sys
 import random
+from pathlib import Path
 
 import asyncio
 import discord
 from discord.ext import commands
 from discord.app_commands import describe
 
-# Discord Botのトークンを環境変数から取得
-DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
-DEFAULT_ROLE_ID = int(os.getenv('DEFAULT_ROLE_ID'))
-TARGET_MESSAGE_ID = int(os.getenv('TARGET_MESSAGE_ID'))
+# 環境変数のバリデーション
+def get_env(key: str, cast=str):
+    value = os.getenv(key)
+    if value is None:
+        raise EnvironmentError(f"環境変数 '{key}' が設定されていません。")
+    return cast(value)
+
+DISCORD_TOKEN = get_env('DISCORD_TOKEN')
+DEFAULT_ROLE_ID = get_env('DEFAULT_ROLE_ID', int)
+TARGET_MESSAGE_ID = get_env('TARGET_MESSAGE_ID', int)
+
+BASE_DIR = Path(__file__).parent
+
+# コンフィグファイルの読み込み
+def load_config(path: Path) -> list[str]:
+    with open(path, 'r', encoding='utf-8') as f:
+        return [line for line in f.read().splitlines() if line.strip()]
+
+omikuji_list = load_config(BASE_DIR / 'config' / 'omikuji.txt')
+neo_omikuji_list = load_config(BASE_DIR / 'config' / 'neo_omikuji.txt')
+mention_response = load_config(BASE_DIR / 'config' / 'mention.txt')
 
 # Intents
 intents = discord.Intents.default()
@@ -19,37 +37,16 @@ intents.members = True
 bot = commands.Bot(command_prefix='/', intents=intents)
 tree = bot.tree
 
-# コンフィグファイルの読み込み
-def load_config(path: str) -> list[str]:
-    with open(path, 'r', encoding='utf-8') as f:
-        return f.read().split('\n')
-
-omikuji_list = load_config('./config/omikuji.txt')
-neo_omikuji_list = load_config('./config/neo_omikuji.txt')
-mention_response = load_config('./config/mention.txt')
-
 # おみくじメッセージを送信する処理
 async def send_omikuji_message(ctx: discord.Interaction, messages: list, count: int = 1) -> None:
-    await ctx.response.send_message(str(random.choices(messages, k=count)))
+    result = '\n'.join(random.choices(messages, k=count))
+    await ctx.response.send_message(result)
 
 # BOT起動時の処理
 @bot.event
 async def on_ready() -> None:
     await bot.change_presence(activity=discord.CustomActivity(name='りょうを監視中'))
     await tree.sync()
-
-# 拡張機能の読み込み
-# async def load_extensions() -> None:
-#     initial_extensions = [
-#         # "cogs.quake_alert",
-#     ]
-
-#     for extension in initial_extensions:
-#         try:
-#             await bot.load_extension(extension)
-#             print(f"Extension '{extension}' loaded successfully.")
-#         except Exception as e:
-#             print(f"Failed to load extension {extension}: {e}")
 
 # 特定のメッセージにリアクションした際の処理
 @bot.event
@@ -72,14 +69,14 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent) -> None:
 async def on_message(message: discord.Message) -> None:
     if message.author == bot.user:
         return
-    
+
     if bot.user in message.mentions:
         await message.channel.send(random.choice(mention_response))
 
 # おみくじコマンド
 @tree.command(name='omikuji', description='おみくじを引くことができます')
-@describe(arg='[回数(1~3)]')
-async def omikuji(ctx: discord.Interaction, arg: int) -> None:
+@describe(arg='回数（1〜3）')
+async def omikuji(ctx: discord.Interaction, arg: int = 1) -> None:
     if 1 <= arg <= 3:
         await send_omikuji_message(ctx, omikuji_list, arg)
     else:
@@ -96,7 +93,6 @@ if __name__ == "__main__":
     async def main():
         discord.utils.setup_logging()
         async with bot:
-            # await load_extensions()
             await bot.start(DISCORD_TOKEN)
 
     asyncio.run(main())
