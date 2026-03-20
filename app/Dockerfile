@@ -2,33 +2,42 @@ FROM ubuntu:24.04
 
 LABEL org.opencontainers.image.source https://github.com/ryo-icy/ryo-discord-bot
 
-# Creat a user
+# ユーザー作成
 ARG UID=1001 \
     GID=1001
 RUN groupadd -g $GID docker && \
     useradd -m -s /bin/bash -u $UID -g $GID docker
 
-RUN apt update -y && apt upgrade -y && \
-    apt install -y python3 python3-pip
+# システムパッケージを一括インストール
+RUN apt-get update -y && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+        python3 \
+        python3-pip \
+        tzdata \
+        language-pack-ja && \
+    update-locale LANG=ja_JP.UTF-8 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install -y tzdata && apt-get clean && rm -rf /var/lib/apt/lists/*
-ENV TZ Asia/Tokyo
-
-RUN apt update -y && apt-get install -y language-pack-ja && \
-    update-locale LANG=ja_JP.UTF-8 && rm -rf /var/lib/apt/lists/*
-ENV LANG="ja_JP.UTF-8" \
+ENV TZ="Asia/Tokyo" \
+    LANG="ja_JP.UTF-8" \
     LANGUAGE="ja_JP:ja" \
     LC_ALL="ja_JP.UTF-8"
 
-RUN mkdir /script
-COPY script/ /script
-RUN chown docker /script
+# pipenv のインストール
+RUN pip3 install --break-system-packages pipenv
+
+# 依存関係を先にインストール（キャッシュ活用）
+RUN mkdir /script && chown docker /script
+COPY --chown=docker script/requirements.txt /script/requirements.txt
 
 USER $UID
-
 WORKDIR /script
-
-RUN pip3 install --break-system-packages pipenv
 RUN python3 -m pipenv install -r requirements.txt
+
+# スクリプト本体をコピー
+USER root
+COPY --chown=docker script/ /script
+
+USER $UID
 
 CMD python3 -m pipenv run python3 main.py
