@@ -7,10 +7,6 @@
   "enabledManagers": ["github-actions", "dockerfile", "pip_requirements"],
   "packageRules": [
     {
-      "matchManagers": ["pip_requirements"],
-      "fileMatch": ["^app/script/requirements\\.txt$"]
-    },
-    {
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
