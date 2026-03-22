@@ -5,7 +5,5 @@ services:
     build: ./app
     container_name: ryo-bot
     restart: always
-    environment:
-      DISCORD_TOKEN: ${DISCORD_TOKEN}
-      DEFAULT_ROLE_ID: ${DEFAULT_ROLE_ID}
-      TARGET_MESSAGE_ID: ${TARGET_MESSAGE_ID}
+    env_file:
+      - .env

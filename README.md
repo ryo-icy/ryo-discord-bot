@@ -14,6 +14,7 @@
 |---|---|
 | リアクションロール付与 | 特定のメッセージへのリアクション時に、指定したロールを付与します |
 | メンション返答 | ボットがメンションされた際にランダムな返答を送信します |
+| Minecraft UUID 検知 | 他のボットが送信するアカウント連携メッセージから Minecraft UUID を抽出し、指定チャンネルに ja.namemc.com の検索 URL を投稿します |
 
 ## Dockerコンテナで実行
 1. BOTのトークンを取得 ※以下BOT作成手順参照
@@ -24,6 +25,12 @@
     DISCORD_TOKEN=取得したトークン
     DEFAULT_ROLE_ID=付与するロールのID
     TARGET_MESSAGE_ID=リアクション対象のメッセージID
+    NAMEMC_CHANNEL_ID=NameMC URLを投稿するチャンネルのID
+    ```
+
+    `.env.example` をコピーして使うと便利です：
+    ```bash
+    cp .env.example .env
     ```
 
 4. `docker compose up -d`
