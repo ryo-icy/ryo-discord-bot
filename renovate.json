@@ -1,0 +1,19 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base"],
+  "timezone": "Asia/Tokyo",
+  "schedule": ["every weekend"],
+  "reviewers": ["ryo-icy"],
+  "enabledManagers": ["github-actions", "dockerfile", "pip_requirements"],
+  "packageRules": [
+    {
+      "matchManagers": ["pip_requirements"],
+      "fileMatch": ["^app/script/requirements\\.txt$"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    }
+  ]
+}
