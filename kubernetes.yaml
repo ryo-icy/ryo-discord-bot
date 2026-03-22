@@ -1,16 +1,8 @@
-
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ryo-discord-bot
-  labels:
-    name: ryo-discord-bot
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ryo-discord-bot
-  namespace: ryo-discord-bot
+  namespace: ryo-server
 spec:
   selector:
     matchLabels:
@@ -25,9 +17,12 @@ spec:
       - name: ryo-discord-bot
         image: ghcr.io/ryo-icy/ryo-discord-bot:latest
         env:
+            # Tokenはハードコーディングしないほうがいいよ(あくまでサンプル)
             - name: DISCORD_TOKEN
-              value: ${DISCORD_TOKEN}
+              value: ""
             - name: DEFAULT_ROLE_ID
-              value: ${DEFAULT_ROLE_ID}
+              value: ""
             - name: TARGET_MESSAGE_ID
-              value: ${TARGET_MESSAGE_ID}
+              value: ""
+            - name: NAMEMC_CHANNEL_ID
+              value: ""

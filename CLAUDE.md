@@ -30,13 +30,14 @@ python3 app/script/main.py
 
 ## 環境変数
 
-`docker-compose.yaml` の `environment:` に設定する：
+`.env` ファイルに設定する（`.env.example` をコピーして使用）：
 
 | 変数名 | 説明 |
 |---|---|
 | `DISCORD_TOKEN` | Discord Developer Portal で取得したボットの認証トークン |
 | `DEFAULT_ROLE_ID` | 対象メッセージにリアクションしたユーザーへ付与するロールの ID（整数） |
 | `TARGET_MESSAGE_ID` | リアクションロール付与のトリガーとなるメッセージの ID（整数） |
+| `NAMEMC_CHANNEL_ID` | Minecraft UUID 検知時に NameMC URL を投稿するチャンネルの ID（整数） |
 
 ## アーキテクチャ
 
@@ -47,6 +48,7 @@ python3 app/script/main.py
 2. **`/neo_omikuji`** — `config/neo_omikuji.txt` から詳細なおみくじを引く（フォーマット: `運勢, 説明`）
 3. **リアクションロール** — `on_raw_reaction_add` で `TARGET_MESSAGE_ID` へのリアクション時に `DEFAULT_ROLE_ID` を付与する
 4. **メンション返答** — `on_message` でボットがメンションされた際に `config/mention.txt` からランダムな一文を送信する
+5. **Minecraft UUID 検知** — `on_message` で `Minecraft UUID: <uuid>` パターンを検知し、`https://ja.namemc.com/search?q=<uuid>` を `NAMEMC_CHANNEL_ID` のチャンネルへ投稿する
 
 **設定ファイル**（`app/script/config/`）は改行区切りのプレーンテキスト。起動時に `load_config()` で一度だけ読み込まれる。
 

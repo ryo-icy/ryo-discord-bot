@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import random
 from pathlib import Path
@@ -18,8 +19,15 @@ def get_env(key: str, cast=str):
 DISCORD_TOKEN = get_env('DISCORD_TOKEN')
 DEFAULT_ROLE_ID = get_env('DEFAULT_ROLE_ID', int)
 TARGET_MESSAGE_ID = get_env('TARGET_MESSAGE_ID', int)
+NAMEMC_CHANNEL_ID = get_env('NAMEMC_CHANNEL_ID', int)
 
 BASE_DIR = Path(__file__).parent
+
+# Minecraft UUID 検知パターン
+UUID_PATTERN = re.compile(
+    r'Minecraft UUID: ([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
+    re.IGNORECASE
+)
 
 # コンフィグファイルの読み込み
 def load_config(path: Path) -> list[str]:
@@ -69,6 +77,15 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent) -> None:
 async def on_message(message: discord.Message) -> None:
     if message.author == bot.user:
         return
+
+    # Minecraft UUID 検知処理
+    match = UUID_PATTERN.search(message.content)
+    if match:
+        uuid = match.group(1)
+        url = f'https://ja.namemc.com/search?q={uuid}'
+        channel = bot.get_channel(NAMEMC_CHANNEL_ID)
+        if channel:
+            await channel.send(url)
 
     if bot.user in message.mentions:
         await message.channel.send(random.choice(mention_response))
