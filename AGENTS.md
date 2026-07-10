@@ -77,6 +77,9 @@ src/ryo_discord_bot/
 
 `main` ブランチへのプッシュ（`src/**`・`Dockerfile`・`pyproject.toml`・`uv.lock` 変更時）で `.github/workflows/docker.yml` が起動し、Docker イメージをビルドして `ghcr.io/ryo-icy/ryo-discord-bot:latest` へプッシュする。認証は `GITHUB_TOKEN`（`permissions: packages: write`）。
 
+> [!NOTE]
+> GHCR パッケージ `ryo-discord-bot` の push には、パッケージ側の設定（ https://github.com/users/ryo-icy/packages/container/ryo-discord-bot/settings の「Manage Actions access」）でこのリポジトリに **Write** ロールが付与されている必要がある。以前 `CR_PAT`（個人 PAT）で push していたため未リンクだった際に `permission_denied: write_package` で失敗した。リポジトリの Settings > Actions > General > Workflow permissions を `Read and write` にするだけでは不十分で、パッケージ側の許可が別途必要。
+
 ## 新機能の追加
 
 1. `src/ryo_discord_bot/cogs/` に `commands.Cog` のサブクラスを作成する
