@@ -1,0 +1,11 @@
+services:
+  ryo-discord-bot:
+    # 開発時は image をコメントアウトし、build をコメントインする
+    #image: "ghcr.io/ryo-icy/ryo-discord-bot:latest"
+    build: .
+    container_name: ryo-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      TZ: Asia/Tokyo
