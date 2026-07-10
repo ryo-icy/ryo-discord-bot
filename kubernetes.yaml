@@ -16,13 +16,8 @@ spec:
       containers:
       - name: ryo-discord-bot
         image: ghcr.io/ryo-icy/ryo-discord-bot:latest
-        env:
-            # Tokenはハードコーディングしないほうがいいよ(あくまでサンプル)
-            - name: DISCORD_TOKEN
-              value: ""
-            - name: DEFAULT_ROLE_ID
-              value: ""
-            - name: TARGET_MESSAGE_ID
-              value: ""
-            - name: NAMEMC_CHANNEL_ID
-              value: ""
+        # 事前に .env から Secret を作成しておく:
+        #   kubectl -n ryo-server create secret generic ryo-discord-bot-env --from-env-file=.env
+        envFrom:
+          - secretRef:
+              name: ryo-discord-bot-env

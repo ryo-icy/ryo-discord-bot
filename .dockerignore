@@ -1,0 +1,13 @@
+.git
+.github
+.venv
+.env
+.env.example
+.ruff_cache
+__pycache__
+doc
+*.md
+compose.yaml
+kubernetes.yaml
+renovate.json
+mise.toml

@@ -36,7 +36,19 @@
 4. `docker compose up -d`
 
 > [!NOTE]
-> 開発時は`docker-compose.yaml`のimageをコメントアウトし、buildをアンコメントする
+> 開発時は`compose.yaml`のimageをコメントアウトし、buildをアンコメントする
+
+## 開発環境
+
+[mise](https://mise.jdx.dev/) で Python / uv を管理しています。
+
+```bash
+mise install        # python 3.12 と uv をインストール
+uv sync             # 依存関係を .venv にインストール
+uv run python -m ryo_discord_bot   # ボットを起動（.env の環境変数が必要）
+uv run ruff check .                # リント
+uv run ruff format .               # フォーマット
+```
 
 ## BOT作成手順
 1. [Developer portal](https://discord.com/developers/applications/)からApplicationを作成
