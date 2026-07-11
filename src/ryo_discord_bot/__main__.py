@@ -22,7 +22,7 @@ class RyoDiscordBot(commands.Bot):
 
     # setup_hook は起動時に一度だけ呼ばれるため、再接続のたびに sync されない
     async def setup_hook(self) -> None:
-        await self.add_cog(OmikujiCog(self))
+        await self.add_cog(OmikujiCog(self, self.settings))
         await self.add_cog(ReactionRoleCog(self, self.settings))
         await self.add_cog(MessageWatchCog(self, self.settings))
         await self.tree.sync()

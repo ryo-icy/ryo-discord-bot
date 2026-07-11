@@ -20,8 +20,8 @@ RUN uv sync --frozen --no-dev
 
 ENV PATH="/opt/venv/bin:${PATH}"
 
-# 非 root ユーザーで実行
-RUN useradd -m -u 1001 bot
+# 非 root ユーザーで実行（おみくじ記録用の data ディレクトリを事前に作成し所有権を渡す）
+RUN useradd -m -u 1001 bot && mkdir -p /app/data && chown bot:bot /app/data
 USER bot
 
 CMD ["python", "-m", "ryo_discord_bot"]

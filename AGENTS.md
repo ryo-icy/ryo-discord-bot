@@ -47,6 +47,7 @@ uv run ruff format .    # フォーマット
 | `DEFAULT_ROLE_ID` | 対象メッセージにリアクションしたユーザーへ付与するロールの ID（整数） |
 | `TARGET_MESSAGE_ID` | リアクションロール付与のトリガーとなるメッセージの ID（整数） |
 | `NAMEMC_CHANNEL_ID` | Minecraft UUID 検知時に NameMC URL を投稿するチャンネルの ID（整数） |
+| `OMIKUJI_DB_PATH` | おみくじ結果を記録する SQLite DB のパス（任意・既定 `data/omikuji.db`） |
 
 ## アーキテクチャ
 
@@ -57,19 +58,21 @@ src/ryo_discord_bot/
 ├── __main__.py        # エントリポイント。Bot クラス定義・Cog 登録・tree.sync（setup_hook で1回のみ）
 ├── settings.py        # 環境変数の読み込み・検証（frozen dataclass）
 ├── config_loader.py   # config/ 内テキストファイルの読み込み（モジュール位置基準の絶対パス解決）
+├── storage.py         # おみくじ結果の SQLite 記録・集計（OmikujiStore、threading.Lock で直列化）
 ├── cogs/
-│   ├── omikuji.py         # /omikuji（Range[int, 1, 3]）と /neo_omikuji
+│   ├── omikuji.py         # /omikuji（Range[int, 1, 3]）・/neo_omikuji・/omikuji_status
 │   ├── reaction_role.py   # TARGET_MESSAGE_ID へのリアクションで DEFAULT_ROLE_ID を付与
 │   └── message_watch.py   # Minecraft UUID 検知（NameMC URL 投稿）とメンション返答
 └── config/            # 改行区切りのプレーンテキスト（omikuji / neo_omikuji / mention）
 ```
 
 **機能一覧：**
-1. **`/omikuji [1~3]`** — `config/omikuji.txt` からランダムに N 回おみくじを引く
-2. **`/neo_omikuji`** — `config/neo_omikuji.txt` から詳細なおみくじを引く（フォーマット: `運勢, 説明`）
-3. **リアクションロール** — `on_raw_reaction_add` で `TARGET_MESSAGE_ID` へのリアクション時に `DEFAULT_ROLE_ID` を付与する
-4. **メンション返答** — `on_message` でボットがメンションされた際に `config/mention.txt` からランダムな一文を送信する
-5. **Minecraft UUID 検知** — `on_message` で `Minecraft UUID: <uuid>` パターンを検知し、`https://ja.namemc.com/search?q=<uuid>` を `NAMEMC_CHANNEL_ID` のチャンネルへ投稿する
+1. **`/omikuji [1~3]`** — `config/omikuji.txt` からランダムに N 回おみくじを引く（結果は SQLite に記録）
+2. **`/neo_omikuji`** — `config/neo_omikuji.txt` から詳細なおみくじを引く（フォーマット: `運勢, 説明`。運勢部分を記録）
+3. **`/omikuji_status [個人/全体]`** — 記録したおみくじ結果の統計（実行回数・結果内訳・直近10件など）を表示する
+4. **リアクションロール** — `on_raw_reaction_add` で `TARGET_MESSAGE_ID` へのリアクション時に `DEFAULT_ROLE_ID` を付与する
+5. **メンション返答** — `on_message` でボットがメンションされた際に `config/mention.txt` からランダムな一文を送信する
+6. **Minecraft UUID 検知** — `on_message` で `Minecraft UUID: <uuid>` パターンを検知し、`https://ja.namemc.com/search?q=<uuid>` を `NAMEMC_CHANNEL_ID` のチャンネルへ投稿する
 
 設定ファイルは各 Cog の `__init__` で `load_config()` により一度だけ読み込まれる。
 

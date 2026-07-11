@@ -9,3 +9,8 @@ services:
       - .env
     environment:
       TZ: Asia/Tokyo
+    volumes:
+      - omikuji-data:/app/data
+
+volumes:
+  omikuji-data:

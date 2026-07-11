@@ -22,6 +22,7 @@ class Settings:
     default_role_id: int
     target_message_id: int
     namemc_channel_id: int
+    omikuji_db_path: str
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -30,4 +31,5 @@ class Settings:
             default_role_id=_get_env("DEFAULT_ROLE_ID", int),
             target_message_id=_get_env("TARGET_MESSAGE_ID", int),
             namemc_channel_id=_get_env("NAMEMC_CHANNEL_ID", int),
+            omikuji_db_path=os.getenv("OMIKUJI_DB_PATH", "data/omikuji.db"),
         )
